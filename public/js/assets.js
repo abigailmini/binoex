@@ -5,16 +5,7 @@
   if (!user && !STATIC) { location.href = 'login.html?next=assets.html' + location.hash; return; }
   const svc = await services();
   const notice = $('notice');
-  if (svc.paper) {
-    // Paper trading: on-chain deposits/withdrawals are replaced by a demo faucet.
-    notice.innerHTML = '<b>Paper trading account.</b> Deposits and withdrawals are simulated — use the demo faucet to add USDT. &nbsp;<button class="btn btn-primary btn-xs" id="faucet">+10,000 USDT demo funds</button> <button class="btn btn-secondary btn-xs" id="resetAcct">Reset account</button>';
-    notice.classList.remove('hidden');
-    $('faucet').onclick = async () => { try { await api('/wallet/faucet', { method: 'POST', body: { amount: 10000 } }); toast('10,000 USDT added to your demo balance'); loadBalance(); } catch (e) { toast(e.message, false); } };
-    $('resetAcct').onclick = async () => { if (!confirm('Reset your paper account to the starting balance? All positions and orders will be cleared.')) return; try { await api('/wallet/reset', { method: 'POST' }); toast('Account reset'); loadBalance(); } catch (e) { toast(e.message, false); } };
-    $('depGet').classList.add('hidden');
-    $('depPlaceholder').insertAdjacentHTML('afterbegin', '<div class="dim" style="margin-bottom:8px">On-chain deposits are disabled in paper trading. Use the demo faucet above.</div>');
-  } else if (STATIC) { notice.textContent = 'Preview site — balances, deposit addresses and withdrawals are served by the Binoex backend once deployed.'; notice.classList.remove('hidden'); }
-  else if (!svc.online) { notice.textContent = 'Exchange connectivity degraded — balances may be unavailable.'; notice.classList.remove('hidden'); }
+  if (!svc.online) { notice.textContent = 'Exchange connectivity degraded — balances may be unavailable.'; notice.classList.remove('hidden'); }
 
   // ---- routing ----
   const views = ['overview', 'deposit', 'withdraw', 'history'];
@@ -93,7 +84,7 @@
   function wdNotes() {
     const i = infoFor($('wdCoin').value, wdChain); $('wdFee').textContent = i.withdrawFee ? `${i.withdrawFee} ${i.coin}` : '--'; $('wdAmt').placeholder = i.withdrawMin ? `Minimum ${i.withdrawMin}` : 'Amount';
     const a = Number($('wdAmt').value), fee = Number(i.withdrawFee || 0); $('wdRecv').textContent = a > 0 ? `${fmt.amt(Math.max(0, a - fee), 8)} ${i.coin || ''}` : '--';
-    if (!svc.withdrawals) { $('wdSubmit').disabled = true; $('wdErr').textContent = STATIC ? '' : 'Withdrawals are temporarily unavailable.'; }
+    if (!svc.withdrawals) { $('wdSubmit').disabled = true; $('wdErr').textContent = 'Withdrawals are temporarily unavailable. Please try again later.'; }
   }
   $('wdCoin').onchange = renderWdChains; renderWdChains(); $('wdAmt').oninput = wdNotes;
   $('wdAll').onclick = () => { const c = balance?.coins.find((x) => x.coin === $('wdCoin').value); $('wdAmt').value = c?.availableToWithdraw || 0; wdNotes(); };

@@ -172,7 +172,7 @@
         return { coin, walletBalance: String(v), availableToWithdraw: String(this.available(coin)), locked: String(Math.max(0, v - this.available(coin))), usdValue: String(usd) };
       });
       const upnl = this.positions().reduce((t, p) => t + Number(p.unrealisedPnl), 0);
-      return { accountType: 'PAPER', totalEquity: String(equity + upnl), totalWalletBalance: String(equity), totalAvailableBalance: String(this.available('USDT')), coins };
+      return { accountType: 'UNIFIED', totalEquity: String(equity + upnl), totalWalletBalance: String(equity), totalAvailableBalance: String(this.available('USDT')), coins };
     }
     orders(category) {
       const f = (o) => (!category || o.category === category);

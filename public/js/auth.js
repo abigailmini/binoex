@@ -39,5 +39,4 @@
       btn.disabled = false; btn.textContent = mode === 'register' ? 'Sign Up' : 'Log In';
     }
   };
-  if (STATIC) $('err').textContent = 'Preview site — accounts activate once the backend is deployed.';
 })();

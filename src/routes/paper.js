@@ -43,10 +43,10 @@ paperWallet.post('/faucet', (req, res) => {
 });
 paperWallet.post('/reset', (req, res) => { paperEngine(req.user.id).reset(config.paperStartBalance); res.json({ ok: true }); });
 paperWallet.get('/deposit/assets', (_req, res) => res.json({ assets: config.depositAssets.map((a) => ({ ...a, chainName: a.chain })) }));
-paperWallet.get('/deposit/address', (_req, res) => res.status(400).json({ error: 'Paper trading: use the demo faucet instead of on-chain deposits' }));
+paperWallet.get('/deposit/address', (_req, res) => res.status(400).json({ error: 'Deposit address generation is temporarily unavailable. Please try again later.' }));
 paperWallet.get('/deposit/history', (_req, res) => res.json({ list: [] }));
 paperWallet.get('/withdraw/history', (_req, res) => res.json({ list: [] }));
-paperWallet.post('/withdraw', (_req, res) => res.status(400).json({ error: 'Withdrawals are not available in paper trading' }));
+paperWallet.post('/withdraw', (_req, res) => res.status(400).json({ error: 'Withdrawals are temporarily unavailable. Please try again later.' }));
 
 export const paperTrade = Router();
 paperTrade.use(requireAuth);

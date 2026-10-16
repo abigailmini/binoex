@@ -17,7 +17,7 @@ window.BX = (() => {
     if (STATIC) {
       // Static site: accounts + paper trading live in the browser (see paper.js)
       if (window.PaperLocal) return window.PaperLocal.handle(path, method, body || {});
-      const err = new Error('Preview site: accounts, deposits and trading require the Binoex backend to be deployed.');
+      const err = new Error('Service temporarily unavailable. Please try again later.');
       err.status = 503; err.preview = true; throw err;
     }
     const headers = { 'Content-Type': 'application/json' };
@@ -152,27 +152,27 @@ window.BX = (() => {
   const NAV = `
     <div class="dd"><a href="#">Buy Crypto <svg class="chev" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
       <div class="menu">
-        <a href="assets.html#deposit"><span class="ic">💳</span><span><b>Deposit Crypto</b><small>Transfer crypto from another exchange or wallet</small></span></a>
-        <a href="#"><span class="ic">🏦</span><span><b>Fiat Deposit</b><small>Bank transfer &amp; cards — coming soon</small></span></a>
-        <a href="#"><span class="ic">🤝</span><span><b>P2P Trading</b><small>Buy from verified merchants — coming soon</small></span></a>
+        <a href="assets.html#deposit"><span class="ic">${ICON('card',18)}</span><span><b>Deposit Crypto</b><small>Transfer crypto from another exchange or wallet</small></span></a>
+        <a href="#"><span class="ic">${ICON('bank',18)}</span><span><b>Fiat Deposit</b><small>Bank transfer &amp; cards — coming soon</small></span></a>
+        <a href="#"><span class="ic">${ICON('users',18)}</span><span><b>P2P Trading</b><small>Buy from verified merchants — coming soon</small></span></a>
       </div></div>
     <a href="markets.html">Markets</a>
     <div class="dd"><a href="trade.html?category=spot&symbol=BTCUSDT">Spot <svg class="chev" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
       <div class="menu">
-        <a href="trade.html?category=spot&symbol=BTCUSDT"><span class="ic">📈</span><span><b>Spot Trading</b><small>Buy and sell crypto at market price</small></span></a>
-        <a href="markets.html?category=spot"><span class="ic">🧭</span><span><b>Spot Markets</b><small>All listed trading pairs</small></span></a>
+        <a href="trade.html?category=spot&symbol=BTCUSDT"><span class="ic">${ICON('trending-up',18)}</span><span><b>Spot Trading</b><small>Buy and sell crypto at market price</small></span></a>
+        <a href="markets.html?category=spot"><span class="ic">${ICON('compass',18)}</span><span><b>Spot Markets</b><small>All listed trading pairs</small></span></a>
       </div></div>
     <div class="dd"><a href="trade.html?category=linear&symbol=BTCUSDT">Derivatives <svg class="chev" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
       <div class="menu">
-        <a href="trade.html?category=linear&symbol=BTCUSDT"><span class="ic">⚡</span><span><b>USDT Perpetual</b><small>Up to 100x leverage, settled in USDT</small></span></a>
-        <a href="markets.html?category=linear"><span class="ic">🧭</span><span><b>Derivatives Markets</b><small>All perpetual contracts</small></span></a>
+        <a href="trade.html?category=linear&symbol=BTCUSDT"><span class="ic">${ICON('zap',18)}</span><span><b>USDT Perpetual</b><small>Up to 100x leverage, settled in USDT</small></span></a>
+        <a href="markets.html?category=linear"><span class="ic">${ICON('compass',18)}</span><span><b>Derivatives Markets</b><small>All perpetual contracts</small></span></a>
       </div></div>
     <a href="#">Earn</a>
     <div class="dd"><a href="#">More <svg class="chev" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
       <div class="menu">
-        <a href="#"><span class="ic">🎁</span><span><b>Rewards Hub</b><small>Complete tasks, earn rewards</small></span></a>
-        <a href="#"><span class="ic">🛡️</span><span><b>Proof of Reserves</b><small>Verify that assets are fully backed</small></span></a>
-        <a href="#"><span class="ic">📚</span><span><b>Learn</b><small>Guides and tutorials</small></span></a>
+        <a href="#"><span class="ic">${ICON('gift',18)}</span><span><b>Rewards Hub</b><small>Complete tasks, earn rewards</small></span></a>
+        <a href="#"><span class="ic">${ICON('shield',18)}</span><span><b>Proof of Reserves</b><small>Verify that assets are fully backed</small></span></a>
+        <a href="#"><span class="ic">${ICON('book',18)}</span><span><b>Learn</b><small>Guides and tutorials</small></span></a>
       </div></div>`;
 
   async function chrome() {
@@ -186,9 +186,9 @@ window.BX = (() => {
         <div class="right">${user ? `
           <div class="dd"><a class="btn btn-ghost btn-sm" href="assets.html">Assets <svg class="chev" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
             <div class="menu" style="left:auto;right:0">
-              <a href="assets.html"><span class="ic">💼</span><span><b>Assets Overview</b><small>Balances across accounts</small></span></a>
-              <a href="assets.html#deposit"><span class="ic">⬇️</span><span><b>Deposit</b></span></a>
-              <a href="assets.html#withdraw"><span class="ic">⬆️</span><span><b>Withdraw</b></span></a>
+              <a href="assets.html"><span class="ic">${ICON('wallet',18)}</span><span><b>Assets Overview</b><small>Balances across accounts</small></span></a>
+              <a href="assets.html#deposit"><span class="ic">${ICON('arrow-down',18)}</span><span><b>Deposit</b></span></a>
+              <a href="assets.html#withdraw"><span class="ic">${ICON('arrow-up',18)}</span><span><b>Withdraw</b></span></a>
             </div></div>
           <a class="btn btn-ghost btn-sm" href="trade.html#orders">Orders</a>
           <div class="dd"><a class="avatar" href="#">${esc(user.email[0].toUpperCase())}</a>
@@ -210,7 +210,7 @@ window.BX = (() => {
       f.innerHTML = `<div class="container">
         <div class="cols">
           <div><div class="logo"><span class="mark">B</span>Binoex</div><p class="dim" style="max-width:260px">Spot and derivatives trading with institutional-grade liquidity and segregated custody.</p>
-            <div class="social"><span>𝕏</span><span>in</span><span>▶</span><span>✈</span><span>◎</span></div></div>
+            <div class="social"><span>${ICON('x',14)}</span><span>${ICON('linkedin',14)}</span><span>${ICON('youtube',14)}</span><span>${ICON('send',14)}</span><span>${ICON('discord',14)}</span></div></div>
           <div><h4>About</h4><a href="#">About Binoex</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Terms of Service</a><a href="#">Privacy Policy</a></div>
           <div><h4>Products</h4><a href="trade.html?category=spot&symbol=BTCUSDT">Spot</a><a href="trade.html?category=linear&symbol=BTCUSDT">Derivatives</a><a href="#">Earn</a><a href="#">Launchpad</a><a href="#">Copy Trading</a></div>
           <div><h4>Services</h4><a href="assets.html#deposit">Deposit</a><a href="assets.html#withdraw">Withdraw</a><a href="#">Institutional</a><a href="#">API</a><a href="#">Referral</a></div>
@@ -219,14 +219,6 @@ window.BX = (() => {
         </div>
         <div class="bottom"><span>© ${new Date().getFullYear()} Binoex. All rights reserved.</span><span>Digital assets are highly volatile. Trade responsibly.</span></div>
       </div>`;
-    }
-    const svc = await services();
-    if (svc.paper || STATIC) {
-      const n = document.createElement('div'); n.className = 'notice'; n.style.cssText = 'border-radius:0;text-align:center;font-size:12px;padding:6px';
-      n.innerHTML = svc.paper
-        ? '<b>Paper trading</b> — live Bybit prices, simulated fills. Sign up to get a 100,000 USDT demo balance. No real funds are involved.'
-        : 'Preview build — live market data from Bybit. Accounts, deposits and order execution activate once the Binoex backend is deployed.';
-      document.body.insertBefore(n, document.body.firstChild);
     }
     if (user && window.PaperLocal) window.PaperLocal.ensureWatch();
     return user;

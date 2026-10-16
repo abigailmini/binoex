@@ -34,6 +34,8 @@ input[type=number] { -moz-appearance: textfield; }
 .up { color: var(--green) !important; } .down { color: var(--red) !important; }
 .muted { color: var(--text-2); } .dim { color: var(--text-3); }
 .hidden { display: none !important; }
+.i { vertical-align: -3px; flex: none; }
+.sidenav a .i, .social .i { opacity: .9; }
 .row { display: flex; align-items: center; gap: 8px; }
 .sb { justify-content: space-between; }
 

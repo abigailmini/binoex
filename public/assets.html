@@ -13,11 +13,11 @@
   <header id="hdr"></header>
   <main class="container assets">
     <aside class="sidenav">
-      <a href="#overview" data-v="overview">💼 Assets Overview</a>
-      <a href="#deposit" data-v="deposit">⬇️ Deposit</a>
-      <a href="#withdraw" data-v="withdraw">⬆️ Withdraw</a>
-      <a href="#history" data-v="history">🧾 Transaction History</a>
-      <a href="trade.html#orders">📋 Orders</a>
+      <a href="#overview" data-v="overview"><i data-icon="wallet" data-size="18"></i> Assets Overview</a>
+      <a href="#deposit" data-v="deposit"><i data-icon="arrow-down" data-size="18"></i> Deposit</a>
+      <a href="#withdraw" data-v="withdraw"><i data-icon="arrow-up" data-size="18"></i> Withdraw</a>
+      <a href="#history" data-v="history"><i data-icon="history" data-size="18"></i> Transaction History</a>
+      <a href="trade.html#orders"><i data-icon="list" data-size="18"></i> Orders</a>
     </aside>
 
     <section>
@@ -31,7 +31,7 @@
         </div></div>
         <div class="panel">
           <div class="ph"><div class="tabs pill"><button class="active">Unified Trading</button><button disabled>Funding</button></div>
-            <div class="row"><div class="search" style="width:220px;height:34px"><span class="dim">🔍</span><input id="coinQ" placeholder="Search coin" /></div><label class="check"><input type="checkbox" id="hideSmall" checked /> Hide small balances</label></div></div>
+            <div class="row"><div class="search" style="width:220px;height:34px"><span class="dim"><i data-icon="search" data-size="16"></i></span><input id="coinQ" placeholder="Search coin" /></div><label class="check"><input type="checkbox" id="hideSmall" checked /> Hide small balances</label></div></div>
           <table class="tbl"><thead><tr><th>Coin</th><th class="r">Amount</th><th class="r">Available</th><th class="r">Locked</th><th class="r">USD Value</th><th class="r">Action</th></tr></thead><tbody id="coins"><tr><td colspan="6" class="empty"><span class="spinner"></span></td></tr></tbody></table>
         </div>
       </div>
@@ -90,6 +90,7 @@
   </main>
   <footer id="ftr"></footer>
   <script src="vendor/qrcode.js"></script>
+  <script src="js/icons.js"></script>
   <script src="js/paper-engine.js"></script>
   <script src="js/paper.js"></script>
   <script src="js/core.js"></script>

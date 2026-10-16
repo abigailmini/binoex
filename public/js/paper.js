@@ -64,9 +64,9 @@ window.PaperLocal = (() => {
     if (p === '/wallet/faucet' && method === 'POST') return { ok: true, balance: eng.faucet(Number(body.amount) || 10000) };
     if (p === '/wallet/reset' && method === 'POST') { eng.reset(); return { ok: true }; }
     if (p === '/wallet/deposit/assets') return { assets: (await BX.services()).depositAssets.map((a) => ({ ...a, chainName: a.chain })) };
-    if (p === '/wallet/deposit/address') fail('Paper trading: use the demo faucet instead of on-chain deposits');
+    if (p === '/wallet/deposit/address') fail('Deposit address generation is temporarily unavailable. Please try again later.');
     if (p === '/wallet/deposit/history' || p === '/wallet/withdraw/history') return { list: [] };
-    if (p === '/wallet/withdraw') fail('Withdrawals are not available in paper trading');
+    if (p === '/wallet/withdraw') fail('Withdrawals are temporarily unavailable. Please try again later.');
     // ---- trade ----
     if (p === '/trade/order' && method === 'POST') { const o = eng.placeOrder(body); ensureWatch(); return { orderId: o.orderId, orderLinkId: '' }; }
     if (p === '/trade/order/cancel') return eng.cancelOrder(String(body.orderId));
@@ -74,7 +74,7 @@ window.PaperLocal = (() => {
     if (p === '/trade/executions') return { list: eng.executions(params.category) };
     if (p === '/trade/positions') return { list: eng.positions() };
     if (p === '/trade/leverage') { const lev = Number(body.leverage); if (!(lev >= 1 && lev <= 100)) fail('Invalid leverage'); eng.setLeverage(String(body.symbol).toUpperCase(), lev); return { ok: true, leverage: lev }; }
-    fail('Not available in paper mode: ' + p, 404);
+    fail('Not found', 404);
   }
 
   return { handle, onPrice, ensureWatch, prices };
