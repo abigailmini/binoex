@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { randomInt } from 'node:crypto';
 import { q, audit, db } from '../db.js';
+import { config } from '../config.js';
 import { master } from '../bybit/client.js';
 import { encrypt } from '../crypto.js';
 import { signToken, requireAuth, publicUser } from '../auth.js';
@@ -38,6 +39,16 @@ authRouter.post('/register', async (req, res) => {
 
   const hash = await bcrypt.hash(password, 12);
   const { lastInsertRowid: userId } = q.insertUser.run(email.toLowerCase(), hash);
+
+  if (config.paper) {
+    // Paper mode: account lives only in our database; demo balance is created on first use.
+    q.attachBybit.run('P' + String(100000 + Number(userId)), null, null, null, userId);
+    audit(userId, 'register_paper', null, req.ip);
+    const user = q.userById.get(userId);
+    const token = signToken(user);
+    res.cookie('token', token, cookieOpts(req));
+    return res.status(201).json({ token, user: publicUser(user) });
+  }
 
   try {
     const username = makeSubUsername();

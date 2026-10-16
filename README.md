@@ -29,6 +29,20 @@ Browser ──HTTP/WS──> Binoex (Node) ──REST (signed)──> api.bybit.
 
 Frontend is static (`public/`, vanilla JS, vendored [lightweight-charts](https://github.com/tradingview/lightweight-charts) + qrcode-generator) and laid out after Bybit's web app. On GitHub Pages it runs in *preview mode*: market data comes straight from Bybit's public REST/WS in the browser; account features need the backend.
 
+## Paper trading mode (default when no Bybit key is set)
+
+Accounts are stored in Binoex's own database and orders are **simulated against live Bybit prices**
+by `public/js/paper-engine.js` (spot balances, one-way USDT-perp positions, limit/market/conditional
+orders, TP/SL, post-only, reduce-only, taker fees, liquidation-price estimate). Every new user gets
+`PAPER_START_BALANCE` (100,000 USDT); the Assets page has a demo faucet and account reset.
+
+- **Backend**: `PAPER_MODE=true` (or just leave `BYBIT_API_KEY` empty) → users in SQLite, engine state in
+  `users.paper_state`, prices from the server's own Bybit public-stream connection. No Bybit account needed.
+- **Static site / GitHub Pages**: the same engine runs in the browser (`public/js/paper.js`) with accounts and
+  state in `localStorage`, so the published site is fully usable for paper trading with no server at all.
+
+Switching to real trading = set the institutional master key and `PAPER_MODE=false`; the frontend is identical.
+
 ## Setup
 
 1. **Bybit institutional master key** – create an API key on the master account with

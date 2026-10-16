@@ -9,11 +9,19 @@ import { config } from '../config.js';
  *
  * Public stream docs: https://bybit-exchange.github.io/docs/v5/ws/connect
  */
+/** Latest traded prices seen on the upstream streams (`${category}:${symbol}` -> number). Feeds paper trading. */
+export const prices = new Map();
+const priceListeners = new Set();
+export const onPrice = (fn) => { priceListeners.add(fn); return () => priceListeners.delete(fn); };
+const PIN = Symbol('pinned'); // sentinel "client" that keeps configured ticker topics subscribed
+
 class Upstream {
   constructor(category) {
     this.category = category;
     this.url = `${config.bybit.wsUrl}/v5/public/${category}`;
     this.topics = new Map(); // topic -> Set<client>
+    const symbols = category === 'spot' ? config.spotSymbols : config.linearSymbols;
+    for (const s of symbols) this.topics.set('tickers.' + s, new Set([PIN]));
     this.ws = null;
     this.backoff = 1000;
     this.connect();
@@ -33,6 +41,10 @@ class Upstream {
       let msg;
       try { msg = JSON.parse(buf.toString()); } catch { return; }
       if (!msg.topic) return; // pong / subscribe acks
+      if (msg.topic.startsWith('tickers.') && msg.data?.lastPrice) {
+        prices.set(`${this.category}:${msg.topic.slice(8)}`, Number(msg.data.lastPrice));
+        for (const fn of priceListeners) fn(this.category, msg.topic.slice(8), Number(msg.data.lastPrice));
+      }
       const clients = this.topics.get(msg.topic);
       if (!clients?.size) return;
       const out = JSON.stringify({ category: this.category, ...msg });

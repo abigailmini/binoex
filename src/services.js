@@ -24,6 +24,15 @@ let cache = { at: 0, data: null };
 
 export async function getServices({ force = false } = {}) {
   if (!force && cache.data && Date.now() - cache.at < 60_000) return cache.data;
+  if (config.paper) {
+    // Paper mode: no master key needed. Spot + USDT perps are simulated; public market data is real.
+    const services = {};
+    for (const [id, def] of Object.entries(SERVICE_DEFS)) {
+      const live = ['spot', 'linear'].includes(id) && config.enabledServices.includes(id);
+      services[id] = { id, label: def.label, enabled: config.enabledServices.includes(id), permitted: live, live };
+    }
+    return (cache = { at: Date.now(), data: { brand: config.brand, paper: true, bybit: { reachable: true, canManageSubAccounts: false, canTransfer: false, canWithdraw: false, permissions: {} }, services, markets: { spot: config.spotSymbols, linear: config.linearSymbols }, depositAssets: config.depositAssets } }).data;
+  }
 
   let keyInfo = null, error = null;
   try {

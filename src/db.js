@@ -47,7 +47,13 @@ CREATE TABLE IF NOT EXISTS audit_log (
 );
 `);
 
+// paper-trading engine state (JSON) — added after the initial schema
+if (!db.prepare("SELECT 1 FROM pragma_table_info('users') WHERE name = 'paper_state'").get()) db.exec('ALTER TABLE users ADD COLUMN paper_state TEXT');
+
 export const q = {
+  paperState: db.prepare('SELECT paper_state FROM users WHERE id = ?'),
+  savePaperState: db.prepare('UPDATE users SET paper_state = ? WHERE id = ?'),
+  paperUsersWithState: db.prepare('SELECT id FROM users WHERE paper_state IS NOT NULL'),
   userByEmail: db.prepare('SELECT * FROM users WHERE email = ?'),
   userById: db.prepare('SELECT * FROM users WHERE id = ?'),
   insertUser: db.prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)'),

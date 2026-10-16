@@ -46,15 +46,21 @@ app.get('/api/services', async (_req, res, next) => {
   try {
     const s = await getServices();
     // never expose raw key permission dump to the public
-    res.json({ brand: s.brand, services: s.services, markets: s.markets, depositAssets: s.depositAssets, online: s.bybit.reachable, withdrawals: s.bybit.canWithdraw && s.bybit.canTransfer });
+    res.json({ brand: s.brand, paper: !!s.paper, services: s.services, markets: s.markets, depositAssets: s.depositAssets, online: s.bybit.reachable, withdrawals: s.bybit.canWithdraw && s.bybit.canTransfer });
   } catch (e) { next(e); }
 });
-app.get('/api/health', (_req, res) => res.json({ ok: true, ts: Date.now() }));
+app.get('/api/health', (_req, res) => res.json({ ok: true, paper: config.paper, ts: Date.now() }));
 
 app.use('/api/auth', authRouter);
 app.use('/api/market', marketRouter);
-app.use('/api/wallet', walletRouter);
-app.use('/api/trade', tradeRouter);
+if (config.paper) {
+  const { paperWallet, paperTrade } = await import('./routes/paper.js');
+  app.use('/api/wallet', paperWallet);
+  app.use('/api/trade', paperTrade);
+} else {
+  app.use('/api/wallet', walletRouter);
+  app.use('/api/trade', tradeRouter);
+}
 
 app.use(express.static(path.join(__dirname, '..', 'public'), { extensions: ['html'] }));
 
@@ -75,6 +81,7 @@ server.listen(config.port, () => {
   console.log(`[binoex] ${config.brand.name} listening on http://localhost:${config.port}  (bybit: ${config.bybit.restUrl})`);
   getServices().then((s) => {
     if (!s.bybit.reachable) return console.warn('[binoex] Bybit unreachable or key invalid:', s.bybit.error);
+    if (config.paper) return console.log('[binoex] PAPER TRADING mode (no Bybit key). live services:', Object.values(s.services).filter((x) => x.live).map((x) => x.id).join(', '));
     console.log('[binoex] master key ok. live services:', Object.values(s.services).filter((x) => x.live).map((x) => x.id).join(', ') || 'none',
       '| withdrawals:', s.bybit.canWithdraw && s.bybit.canTransfer ? 'on' : 'OFF (key lacks Withdraw/Transfer)');
   });

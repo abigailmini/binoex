@@ -39,7 +39,8 @@ export function publicUser(user) {
     id: user.id,
     email: user.email,
     uid: user.bybit_uid,
-    provisioned: !!user.sub_api_key,
+    paper: config.paper,
+    provisioned: config.paper || !!user.sub_api_key,
     status: user.status,
     createdAt: user.created_at,
   };

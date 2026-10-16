@@ -15,6 +15,8 @@ window.BX = (() => {
   // ---------- backend API ----------
   async function api(path, { method = 'GET', body } = {}) {
     if (STATIC) {
+      // Static site: accounts + paper trading live in the browser (see paper.js)
+      if (window.PaperLocal) return window.PaperLocal.handle(path, method, body || {});
       const err = new Error('Preview site: accounts, deposits and trading require the Binoex backend to be deployed.');
       err.status = 503; err.preview = true; throw err;
     }
@@ -29,7 +31,7 @@ window.BX = (() => {
   let meCache;
   async function me() {
     if (meCache !== undefined) return meCache;
-    if (STATIC || !token()) return (meCache = null);
+    if (!token()) return (meCache = null);
     try { meCache = (await api('/auth/me')).user; } catch (e) { if (e.status === 401) setToken(null); meCache = null; }
     return meCache;
   }
@@ -39,7 +41,7 @@ window.BX = (() => {
     if (servicesCache) return servicesCache;
     if (STATIC) {
       return (servicesCache = {
-        online: false, withdrawals: false, preview: true,
+        online: true, withdrawals: false, preview: true, paper: !!window.PaperLocal,
         services: { spot: { id: 'spot', label: 'Spot', live: true }, linear: { id: 'linear', label: 'Derivatives', live: true } },
         markets: DEFAULT_SYMBOLS,
         depositAssets: [{ coin: 'USDT', chain: 'TRX' }, { coin: 'USDT', chain: 'ETH' }, { coin: 'USDT', chain: 'ARBI' }, { coin: 'USDC', chain: 'ETH' }, { coin: 'BTC', chain: 'BTC' }, { coin: 'ETH', chain: 'ETH' }, { coin: 'SOL', chain: 'SOL' }],
@@ -67,6 +69,7 @@ window.BX = (() => {
 
   // One shared socket per category (static: Bybit public stream; backend: relay carries all categories on /ws).
   const sockets = {};
+  const prices = {}; // `${category}:${symbol}` -> last traded price (fed by any ticker subscription)
   function stream(category) {
     const key = STATIC ? category : 'relay';
     if (sockets[key]) return sockets[key];
@@ -87,6 +90,10 @@ window.BX = (() => {
         let msg; try { msg = JSON.parse(ev.data); } catch { return; }
         if (!msg.topic) return;
         const cat = STATIC ? category : msg.category;
+        if (msg.topic.startsWith('tickers.') && msg.data?.lastPrice) {
+          prices[`${cat}:${msg.topic.slice(8)}`] = Number(msg.data.lastPrice);
+          if (window.PaperLocal) window.PaperLocal.onPrice(cat, msg.topic.slice(8), Number(msg.data.lastPrice));
+        }
         const set = handlers.get(`${cat}:${msg.topic}`);
         if (set) for (const h of set) h(msg);
       };
@@ -213,13 +220,17 @@ window.BX = (() => {
         <div class="bottom"><span>© ${new Date().getFullYear()} Binoex. All rights reserved.</span><span>Digital assets are highly volatile. Trade responsibly.</span></div>
       </div>`;
     }
-    if (STATIC) {
+    const svc = await services();
+    if (svc.paper || STATIC) {
       const n = document.createElement('div'); n.className = 'notice'; n.style.cssText = 'border-radius:0;text-align:center;font-size:12px;padding:6px';
-      n.textContent = 'Preview build — live market data from Bybit. Accounts, deposits and order execution activate once the Binoex backend is deployed.';
+      n.innerHTML = svc.paper
+        ? '<b>Paper trading</b> — live Bybit prices, simulated fills. Sign up to get a 100,000 USDT demo balance. No real funds are involved.'
+        : 'Preview build — live market data from Bybit. Accounts, deposits and order execution activate once the Binoex backend is deployed.';
       document.body.insertBefore(n, document.body.firstChild);
     }
+    if (user && window.PaperLocal) window.PaperLocal.ensureWatch();
     return user;
   }
 
-  return { STATIC, DEFAULT_SYMBOLS, api, me, services, market, stream, fmt, esc, base, quote, coinIcon, toast, qs, chrome, token, setToken };
+  return { STATIC, DEFAULT_SYMBOLS, api, me, services, market, stream, prices, fmt, esc, base, quote, coinIcon, toast, qs, chrome, token, setToken };
 })();
