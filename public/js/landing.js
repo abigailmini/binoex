@@ -1,7 +1,7 @@
 (() => {
-  const { api, marketSocket, fmt, setToken, token } = window.Binoex;
+  const { api, marketSocket, fmt, setToken, token, STATIC, STATIC_SYMBOLS } = window.Binoex;
   document.getElementById('year').textContent = new Date().getFullYear();
-  if (token()) api('/auth/me').then(() => (location.href = '/app')).catch(() => setToken(null));
+  if (token()) api('/auth/me').then(() => (location.href = 'app.html')).catch(() => setToken(null));
 
   // ---- auth modal ----
   const modal = document.getElementById('authModal');
@@ -33,7 +33,7 @@
     try {
       const r = await api('/auth/' + mode, { method: 'POST', body: { email: form.email.value, password: form.password.value } });
       setToken(r.token);
-      location.href = '/app';
+      location.href = 'app.html';
     } catch (ex) {
       err.textContent = ex.message;
       submit.disabled = false; submit.textContent = mode === 'login' ? 'Log in' : 'Create account';
@@ -48,14 +48,21 @@
     const chg = Number(t.price24hPcnt);
     return `<div class="sym">${base}<small>/${quote}</small></div><div class="mono">${fmt.price(t.lastPrice)}</div><div class="${chg >= 0 ? 'up' : 'down'}">${fmt.pct(chg)}</div>`;
   }
-  api('/market/tickers?category=spot').then(({ list }) => {
+  function render(list) {
     box.innerHTML = '';
     for (const t of list) {
       const el = document.createElement('div'); el.className = 'row'; el.innerHTML = row(t); box.appendChild(el); rows.set(t.symbol, { el, t });
     }
-    const sock = marketSocket();
+    const sock = marketSocket('spot');
     for (const t of list) sock.subscribe('spot', 'tickers.' + t.symbol, (msg) => {
       const r = rows.get(t.symbol); Object.assign(r.t, msg.data); r.el.innerHTML = row(r.t);
     });
-  }).catch(() => { box.innerHTML = '<div class="row"><div class="sym">Markets offline</div><div></div><div></div></div>'; });
+  }
+  if (STATIC) {
+    // No backend: rows start empty and fill from Bybit's WS ticker snapshots.
+    render(STATIC_SYMBOLS.map((symbol) => ({ symbol, lastPrice: NaN, price24hPcnt: 0 })));
+  } else {
+    api('/market/tickers?category=spot').then(({ list }) => render(list))
+      .catch(() => { box.innerHTML = '<div class="row"><div class="sym">Markets offline</div><div></div><div></div></div>'; });
+  }
 })();

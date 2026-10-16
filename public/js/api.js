@@ -1,8 +1,16 @@
 // Tiny API + WS helper shared by landing & app pages.
 window.Binoex = (() => {
   const token = () => localStorage.getItem('binoex_token');
+  // Static preview mode (GitHub Pages): no Binoex backend, market data streams straight from Bybit's public WS.
+  const STATIC = location.hostname.endsWith('github.io') || window.BINOEX_STATIC === true;
+  const STATIC_WS = 'wss://stream.bybit.com/v5/public/';
+  const STATIC_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'DOGEUSDT', 'ADAUSDT', 'TONUSDT'];
 
   async function api(path, { method = 'GET', body } = {}) {
+    if (STATIC) {
+      const err = new Error('This is the static preview — sign-up and trading need the Binoex backend deployed (see README).');
+      err.status = 503; throw err;
+    }
     const headers = { 'Content-Type': 'application/json' };
     if (token()) headers.Authorization = 'Bearer ' + token();
     const res = await fetch('/api' + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
@@ -16,21 +24,23 @@ window.Binoex = (() => {
   }
 
   // WebSocket relay client with auto-reconnect; handlers keyed by `${category}:${topic}`.
-  function marketSocket() {
+  // In STATIC mode the socket talks to Bybit's public stream for one category directly (same message shapes).
+  function marketSocket(staticCategory = 'spot') {
     const handlers = new Map();
     const subs = new Set();
     let ws, timer;
     function connect() {
-      ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws');
+      ws = new WebSocket(STATIC ? STATIC_WS + staticCategory : (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws');
       ws.onopen = () => {
         const byCat = {};
         for (const key of subs) { const [cat, topic] = key.split(':'); (byCat[cat] ??= []).push(topic); }
         for (const [category, args] of Object.entries(byCat)) ws.send(JSON.stringify({ op: 'subscribe', category, args }));
-        timer = setInterval(() => ws.readyState === 1 && ws.send(JSON.stringify({ op: 'ping' })), 25000);
+        timer = setInterval(() => ws.readyState === 1 && ws.send(JSON.stringify({ op: 'ping' })), 20000);
       };
       ws.onmessage = (ev) => {
         const msg = JSON.parse(ev.data);
         if (!msg.topic) return;
+        if (STATIC) msg.category = staticCategory;
         const h = handlers.get(`${msg.category}:${msg.topic}`);
         if (h) h(msg);
       };
@@ -61,5 +71,5 @@ window.Binoex = (() => {
 
   function setToken(t) { if (t) localStorage.setItem('binoex_token', t); else localStorage.removeItem('binoex_token'); }
 
-  return { api, marketSocket, fmt, token, setToken };
+  return { api, marketSocket, fmt, token, setToken, STATIC, STATIC_SYMBOLS };
 })();

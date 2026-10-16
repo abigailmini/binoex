@@ -1,6 +1,6 @@
 (() => {
   const { api, marketSocket, fmt, setToken, token } = window.Binoex;
-  if (!token()) { location.href = '/'; return; }
+  if (!token()) { location.href = './'; return; }
 
   const $ = (id) => document.getElementById(id);
   const toast = (msg, ok = true) => { const t = $('toast'); t.textContent = msg; t.style.borderColor = ok ? 'var(--green)' : 'var(--red)'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000); };
@@ -14,7 +14,7 @@
     try {
       [{ user }, services] = await Promise.all([api('/auth/me'), api('/services')]);
     } catch (e) {
-      if (e.status === 401) { setToken(null); location.href = '/'; return; }
+      if (e.status === 401) { setToken(null); location.href = './'; return; }
       $('banner').textContent = 'Backend unavailable: ' + e.message; $('banner').style.display = 'block'; return;
     }
     $('userEmail').textContent = user.email + ' · UID ' + (user.uid || '—');
@@ -30,7 +30,7 @@
     loadBalance();
   })();
 
-  $('btnLogout').onclick = async () => { await api('/auth/logout', { method: 'POST' }).catch(() => {}); setToken(null); location.href = '/'; };
+  $('btnLogout').onclick = async () => { await api('/auth/logout', { method: 'POST' }).catch(() => {}); setToken(null); location.href = './'; };
 
   // ---------- navigation ----------
   let currentCat = 'spot';
