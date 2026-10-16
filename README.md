@@ -15,8 +15,10 @@ Browser ──HTTP/WS──> Binoex (Node) ──REST (signed)──> api.bybit.
 
 | Area | How it maps to Bybit |
 |---|---|
-| Landing page + live tickers | `GET /v5/market/tickers`, WS `tickers.*` |
-| Register | `POST /v5/user/create-sub-member` (UTA sub) + `POST /v5/user/create-sub-api` (per-user key, secret AES-256-GCM at rest) |
+| Home (`index.html`), Markets (`markets.html`) | `GET /v5/market/tickers`, `kline` sparklines, WS `tickers.*` |
+| Trade terminal (`trade.html`) — chart, order book, trades, order form, positions/orders | `kline`, WS `kline.*`, `orderbook.50.*`, `publicTrade.*`, `tickers.*`; `POST /v5/order/create` (limit/market/conditional, TP/SL, post-only, reduce-only), `POST /v5/position/set-leverage` |
+| Assets (`assets.html`) — overview, deposit, withdraw, history | see rows below |
+| Register / Login (`login.html`) | `POST /v5/user/create-sub-member` (UTA sub) + `POST /v5/user/create-sub-api` (per-user key, secret AES-256-GCM at rest) |
 | Login | local bcrypt + JWT (12h) |
 | Wallet | `GET /v5/account/wallet-balance` with the user's sub key |
 | Deposit | `GET /v5/asset/deposit/query-sub-member-address`, `.../query-sub-member-record`, `GET /v5/asset/coin/query-info` |
@@ -24,6 +26,8 @@ Browser ──HTTP/WS──> Binoex (Node) ──REST (signed)──> api.bybit.
 | Spot / Perps trading | `POST /v5/order/create`, `/cancel`, `GET /v5/order/realtime`, `/history`, `/v5/position/list` |
 | Order book / trades | WS `orderbook.50.*`, `publicTrade.*` |
 | Service gating | `GET /v5/user/query-api` → only products the master key is permitted for (and listed in `ENABLED_SERVICES`) appear in the UI |
+
+Frontend is static (`public/`, vanilla JS, vendored [lightweight-charts](https://github.com/tradingview/lightweight-charts) + qrcode-generator) and laid out after Bybit's web app. On GitHub Pages it runs in *preview mode*: market data comes straight from Bybit's public REST/WS in the browser; account features need the backend.
 
 ## Setup
 

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binoex | Markets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/bybit.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header id="hdr"></header>
+  <main class="container">
+    <div class="markets-head">
+      <h1>Markets</h1>
+      <div class="search"><span class="dim">🔍</span><input id="q" placeholder="Search coin" /></div>
+    </div>
+    <div class="tabs" style="margin-bottom:8px"><button data-cat="spot">Spot</button><button data-cat="linear">Derivatives</button></div>
+    <table class="tbl">
+      <thead><tr><th>Trading Pairs</th><th class="r">Last Price</th><th class="r">24H Change</th><th class="r">24H High</th><th class="r">24H Low</th><th class="r">24H Volume</th><th class="r">Action</th></tr></thead>
+      <tbody id="body"><tr><td colspan="7" class="empty"><span class="spinner"></span></td></tr></tbody>
+    </table>
+  </main>
+  <footer id="ftr"></footer>
+  <script src="js/core.js"></script>
+  <script src="js/markets.js"></script>
+</body>
+</html>

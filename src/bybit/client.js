@@ -125,6 +125,7 @@ export class BybitClient {
   openOrders(category, symbol) { return this.get('/v5/order/realtime', { category, symbol, limit: 50, openOnly: 0 }); }
   orderHistory(category, symbol) { return this.get('/v5/order/history', { category, symbol, limit: 50 }); }
   executions(category, symbol) { return this.get('/v5/execution/list', { category, symbol, limit: 50 }); }
+  setLeverage({ category, symbol, leverage }) { return this.post('/v5/position/set-leverage', { category, symbol, buyLeverage: String(leverage), sellLeverage: String(leverage) }); }
   positions(category, settleCoin = 'USDT') { return this.get('/v5/position/list', { category, settleCoin, limit: 50 }); }
   transactionLog(accountType = 'UNIFIED') { return this.get('/v5/account/transaction-log', { accountType, limit: 50 }); }
 }

@@ -20,7 +20,7 @@ function allowedSymbol(category, symbol) {
 /** Place an order on the user's sub-account. Body: {category, symbol, side, orderType, qty, price?, timeInForce?} */
 tradeRouter.post('/order', async (req, res, next) => {
   try {
-    const { category = 'spot', symbol, side, orderType = 'Market', qty, price, timeInForce, reduceOnly, marketUnit } = req.body || {};
+    const { category = 'spot', symbol, side, orderType = 'Market', qty, price, timeInForce, reduceOnly, marketUnit, triggerPrice, triggerDirection, takeProfit, stopLoss } = req.body || {};
     await checkCategory(category);
     const S = String(symbol || '').toUpperCase();
     if (!allowedSymbol(category, S)) return res.status(400).json({ error: 'Market not listed' });
@@ -30,7 +30,11 @@ tradeRouter.post('/order', async (req, res, next) => {
     if (orderType === 'Limit' && !(Number(price) > 0)) return res.status(400).json({ error: 'Limit orders need a price' });
 
     const order = { category, symbol: S, side, orderType, qty: String(qty) };
-    if (orderType === 'Limit') { order.price = String(price); order.timeInForce = timeInForce || 'GTC'; }
+    if (orderType === 'Limit') { order.price = String(price); order.timeInForce = ['GTC', 'IOC', 'FOK', 'PostOnly'].includes(timeInForce) ? timeInForce : 'GTC'; }
+    // Conditional (trigger) orders: Bybit needs triggerPrice + triggerDirection (1 = rises to, 2 = falls to)
+    if (Number(triggerPrice) > 0) { order.triggerPrice = String(triggerPrice); order.triggerDirection = Number(triggerDirection) === 2 ? 2 : 1; if (category === 'spot') order.orderFilter = 'StopOrder'; }
+    if (Number(takeProfit) > 0) order.takeProfit = String(takeProfit);
+    if (Number(stopLoss) > 0) order.stopLoss = String(stopLoss);
     // Spot market buys are quoted in quote currency by default on Bybit; let the UI choose.
     if (category === 'spot' && orderType === 'Market' && marketUnit) order.marketUnit = marketUnit; // baseCoin | quoteCoin
     if (category !== 'spot' && reduceOnly) order.reduceOnly = true;
@@ -67,6 +71,23 @@ tradeRouter.get('/executions', async (req, res, next) => {
     await checkCategory(category);
     res.json({ list: (await userClient(req.user).executions(category)).list || [] });
   } catch (e) { next(e); }
+});
+
+/** Set leverage on a derivatives symbol (cross/isolated handled by Bybit account mode). */
+tradeRouter.post('/leverage', async (req, res, next) => {
+  try {
+    const { category = 'linear', symbol, leverage } = req.body || {};
+    await checkCategory(category);
+    const S = String(symbol || '').toUpperCase(), lev = Number(leverage);
+    if (!allowedSymbol(category, S)) return res.status(400).json({ error: 'Market not listed' });
+    if (!(lev >= 1 && lev <= 200)) return res.status(400).json({ error: 'Invalid leverage' });
+    await userClient(req.user).setLeverage({ category, symbol: S, leverage: lev });
+    audit(req.user.id, 'leverage', { symbol: S, leverage: lev }, req.ip);
+    res.json({ ok: true, leverage: lev });
+  } catch (e) {
+    if (e.retCode === 110043) return res.json({ ok: true, leverage: Number(req.body?.leverage) }); // "leverage not modified"
+    next(e);
+  }
 });
 
 tradeRouter.get('/positions', async (req, res, next) => {

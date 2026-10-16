@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binoex | Assets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/bybit.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header id="hdr"></header>
+  <main class="container assets">
+    <aside class="sidenav">
+      <a href="#overview" data-v="overview">💼 Assets Overview</a>
+      <a href="#deposit" data-v="deposit">⬇️ Deposit</a>
+      <a href="#withdraw" data-v="withdraw">⬆️ Withdraw</a>
+      <a href="#history" data-v="history">🧾 Transaction History</a>
+      <a href="trade.html#orders">📋 Orders</a>
+    </aside>
+
+    <section>
+      <div id="notice" class="notice hidden" style="margin-bottom:16px"></div>
+
+      <!-- overview -->
+      <div class="view" id="v-overview">
+        <div class="panel" style="margin-bottom:20px"><div class="pb equity">
+          <div><div class="dim" style="font-size:13px">Total Equity</div><div class="big"><span id="equity">--</span><small>USDT</small></div><div class="dim" style="font-size:13px">≈ $<span id="equityUsd">--</span> &nbsp;·&nbsp; Available <span class="num" id="available">--</span> USDT</div></div>
+          <div class="acts"><a class="btn btn-primary" href="#deposit">Deposit</a><a class="btn btn-secondary" href="#withdraw">Withdraw</a><a class="btn btn-secondary" href="trade.html">Trade</a></div>
+        </div></div>
+        <div class="panel">
+          <div class="ph"><div class="tabs pill"><button class="active">Unified Trading</button><button disabled>Funding</button></div>
+            <div class="row"><div class="search" style="width:220px;height:34px"><span class="dim">🔍</span><input id="coinQ" placeholder="Search coin" /></div><label class="check"><input type="checkbox" id="hideSmall" checked /> Hide small balances</label></div></div>
+          <table class="tbl"><thead><tr><th>Coin</th><th class="r">Amount</th><th class="r">Available</th><th class="r">Locked</th><th class="r">USD Value</th><th class="r">Action</th></tr></thead><tbody id="coins"><tr><td colspan="6" class="empty"><span class="spinner"></span></td></tr></tbody></table>
+        </div>
+      </div>
+
+      <!-- deposit -->
+      <div class="view hidden" id="v-deposit">
+        <h2 style="margin:0 0 20px">Deposit Crypto</h2>
+        <div class="panel"><div class="pb steps">
+          <div class="step"><div class="n">1</div><div><h4>Select Coin</h4><div class="select" style="max-width:360px"><select id="depCoin"></select></div></div></div>
+          <div class="step"><div class="n">2</div><div><h4>Select Network</h4><div class="chips" id="depChains"></div><div class="dim" style="font-size:12px;margin-top:8px" id="depChainNote"></div></div></div>
+          <div class="step"><div class="n">3</div><div><h4>Deposit Address</h4>
+            <div id="depAddrWrap" class="hidden">
+              <div class="addr-box"><div class="qr" id="depQr"></div><div style="flex:1"><div class="dim" style="font-size:12px;margin-bottom:4px">Address</div><div class="a" id="depAddr"></div><div id="depTagWrap" class="hidden"><div class="dim" style="font-size:12px;margin:10px 0 4px">Memo / Tag (required)</div><div class="a" id="depTag"></div></div><div class="row" style="margin-top:10px"><button class="btn btn-secondary btn-xs" id="depCopy">Copy Address</button></div></div></div>
+              <div class="kv"><span>Minimum deposit</span><b id="depMin">--</b></div>
+              <div class="kv"><span>Expected arrival</span><b id="depConf">--</b></div>
+              <div class="kv"><span>Credited to</span><b>Unified Trading Account</b></div>
+            </div>
+            <div id="depPlaceholder"><button class="btn btn-primary" id="depGet">Get Address</button><div class="err" id="depErr"></div></div>
+            <p class="dim" style="font-size:12px;margin-top:14px">• Send only <b id="depCoinName">--</b> on the <b id="depChainName">--</b> network to this address. Sending any other asset may result in permanent loss.<br />• Deposits are credited after network confirmation.</p>
+          </div></div>
+        </div></div>
+        <div class="panel" style="margin-top:20px"><div class="ph">Recent Deposits <button class="btn btn-ghost btn-xs" id="depRefresh">Refresh</button></div>
+          <table class="tbl"><thead><tr><th>Time</th><th>Coin</th><th class="r">Amount</th><th>Network</th><th>TxID</th><th>Status</th></tr></thead><tbody id="depHist"><tr><td colspan="6" class="empty">--</td></tr></tbody></table></div>
+      </div>
+
+      <!-- withdraw -->
+      <div class="view hidden" id="v-withdraw">
+        <h2 style="margin:0 0 20px">Withdraw Crypto</h2>
+        <div class="panel"><form class="pb steps" id="wdForm">
+          <div class="step"><div class="n">1</div><div><h4>Select Coin</h4><div class="select" style="max-width:360px"><select id="wdCoin"></select></div><div class="kv" style="max-width:360px"><span>Available</span><b id="wdAvail" class="num">--</b></div></div></div>
+          <div class="step"><div class="n">2</div><div><h4>Withdraw To</h4>
+            <div class="field"><label>Address</label><div class="input"><input id="wdAddr" placeholder="Enter wallet address" autocomplete="off" required /></div></div>
+            <div class="field"><label>Network</label><div class="chips" id="wdChains"></div></div>
+            <div class="field"><label>Memo / Tag (optional)</label><div class="input"><input id="wdTag" autocomplete="off" /></div></div>
+          </div></div>
+          <div class="step"><div class="n">3</div><div><h4>Amount</h4>
+            <div class="field" style="max-width:360px"><div class="input"><input type="number" step="any" min="0" id="wdAmt" placeholder="Minimum 0" required /><span class="unit" id="wdUnit">--</span><button type="button" class="act" id="wdAll">All</button></div></div>
+            <div class="kv" style="max-width:360px"><span>Network fee</span><b id="wdFee">--</b></div>
+            <div class="kv" style="max-width:360px"><span>Amount received</span><b id="wdRecv" class="num">--</b></div>
+            <div class="err" id="wdErr"></div>
+            <button class="btn btn-primary" id="wdSubmit" type="submit">Withdraw</button>
+            <p class="dim" style="font-size:12px;margin-top:14px">• Make sure the address supports the selected network. Withdrawals to an incorrect address cannot be reversed.</p>
+          </div></div>
+        </form></div>
+        <div class="panel" style="margin-top:20px"><div class="ph">Recent Withdrawals <button class="btn btn-ghost btn-xs" id="wdRefresh">Refresh</button></div>
+          <table class="tbl"><thead><tr><th>Time</th><th>Coin</th><th class="r">Amount</th><th>Network</th><th>Address</th><th>Status</th></tr></thead><tbody id="wdHist"><tr><td colspan="6" class="empty">--</td></tr></tbody></table></div>
+      </div>
+
+      <!-- history -->
+      <div class="view hidden" id="v-history">
+        <h2 style="margin:0 0 20px">Transaction History</h2>
+        <div class="panel"><div class="ph">Deposits</div><table class="tbl"><thead><tr><th>Time</th><th>Coin</th><th class="r">Amount</th><th>Network</th><th>TxID</th><th>Status</th></tr></thead><tbody id="hDep"><tr><td colspan="6" class="empty">--</td></tr></tbody></table></div>
+        <div class="panel" style="margin-top:20px"><div class="ph">Withdrawals</div><table class="tbl"><thead><tr><th>Time</th><th>Coin</th><th class="r">Amount</th><th>Network</th><th>Address</th><th>Status</th></tr></thead><tbody id="hWd"><tr><td colspan="6" class="empty">--</td></tr></tbody></table></div>
+      </div>
+    </section>
+  </main>
+  <footer id="ftr"></footer>
+  <script src="vendor/qrcode.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/assets.js"></script>
+</body>
+</html>

@@ -3,64 +3,92 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Binoex — Buy, sell and trade crypto</title>
+  <title>Binoex | Buy, Sell &amp; Trade Crypto</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/bybit.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 </head>
 <body>
-  <nav class="nav">
-    <div class="container" style="display:flex;justify-content:space-between;align-items:center;width:100%">
-      <a class="logo" href="./"><span class="mark">B</span> Binoex</a>
-      <div class="links">
-        <a class="btn" href="app.html">Terminal</a>
-        <a class="btn" id="btnLogin">Log in</a>
-        <a class="btn primary" id="btnRegister">Get started</a>
-      </div>
-    </div>
-  </nav>
+  <header id="hdr"></header>
 
-  <main class="container">
-    <section class="hero">
+  <main>
+    <section class="container hero">
       <div>
-        <h1>Trade crypto with <span>institutional-grade</span> liquidity.</h1>
-        <p>Spot and derivatives markets, instant deposits, secure withdrawals. Binoex gives you deep order books and tight spreads from day one.</p>
-        <div class="cta">
-          <a class="btn primary" id="btnRegister2">Create account</a>
-          <a class="btn" href="#markets">View markets</a>
+        <h1>Trade Crypto<br />with <span>Confidence</span></h1>
+        <p>Deep liquidity, segregated custody and 24/7 markets. Spot, USDT perpetuals and more — all in one account.</p>
+        <div class="row"><a class="btn btn-primary btn-lg" href="login.html?mode=register">Sign Up Now</a><a class="btn btn-outline btn-lg" href="trade.html?category=linear&symbol=BTCUSDT">Start Trading</a></div>
+        <div class="stats">
+          <div><b>500+</b><small>Trading pairs</small></div>
+          <div><b>$10B+</b><small>24h liquidity</small></div>
+          <div><b>24/7</b><small>Customer support</small></div>
         </div>
       </div>
-      <div class="ticker-card" id="markets">
-        <div class="row head"><div>Market</div><div>Last price</div><div>24h change</div></div>
-        <div id="landingTickers"><div class="row"><div class="sym">Loading…</div><div></div><div></div></div></div>
+      <div class="signup-card">
+        <h3>Create your account</h3>
+        <form id="heroForm">
+          <div class="field"><div class="input"><input type="email" id="heroEmail" placeholder="Email address" required /></div></div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit">Sign Up</button>
+        </form>
+        <div class="or">or continue with</div>
+        <div class="oauth"><button class="btn btn-secondary" type="button">G &nbsp;Google</button><button class="btn btn-secondary" type="button"> &nbsp;Apple</button></div>
       </div>
     </section>
 
-    <section class="features">
-      <div class="feature"><div class="ic">⚡</div><h3>Deep liquidity</h3><p>Orders are routed to a top-tier global order book, so you get fills at real market prices.</p></div>
-      <div class="feature"><div class="ic">🔐</div><h3>Segregated accounts</h3><p>Every user gets their own segregated custody account. Your funds are never pooled.</p></div>
-      <div class="feature"><div class="ic">💸</div><h3>Fast deposits</h3><p>Deposit USDT, BTC, ETH, SOL and more on the chains you already use. Credited after network confirmation.</p></div>
-      <div class="feature"><div class="ic">📈</div><h3>Real-time data</h3><p>Streaming tickers, order books and trades over WebSocket. No refresh needed.</p></div>
+    <section class="container section">
+      <h2>Catch Your Next Trading Opportunity</h2>
+      <p class="sub">Live prices across the most traded markets.</p>
+      <div class="mkt-tabs">
+        <button class="active" data-tab="hot">Hot Derivatives</button>
+        <button data-tab="spot">Hot Coins</button>
+        <button data-tab="gainers">Top Gainers</button>
+        <button data-tab="volume">Top Volume</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Trading Pairs</th><th class="r">Last Price</th><th class="r">24H Change</th><th class="r">24H Volume</th><th>Chart</th><th class="r">Action</th></tr></thead>
+        <tbody id="mktBody"><tr><td colspan="6" class="empty"><span class="spinner"></span></td></tr></tbody>
+      </table>
+      <div style="text-align:center;margin-top:16px"><a class="btn btn-outline" href="markets.html">View All Markets</a></div>
+    </section>
+
+    <section class="container section">
+      <h2>Trade Like a Pro</h2>
+      <p class="sub">Everything you need, from your first trade to advanced strategies.</p>
+      <div class="cards3">
+        <div class="card"><div class="ic">📈</div><h3>Spot</h3><p>Buy and sell hundreds of coins at the best available price with ultra-low fees.</p><a class="more" href="trade.html?category=spot&symbol=BTCUSDT">Trade Spot →</a></div>
+        <div class="card"><div class="ic">⚡</div><h3>Derivatives</h3><p>USDT perpetual contracts with up to 100x leverage and deep, institutional order books.</p><a class="more" href="trade.html?category=linear&symbol=BTCUSDT">Trade Perpetuals →</a></div>
+        <div class="card"><div class="ic">💰</div><h3>Earn</h3><p>Put idle assets to work with flexible savings and fixed-term products.</p><a class="more" href="#">Coming soon →</a></div>
+      </div>
+    </section>
+
+    <section class="container section split">
+      <div>
+        <h2>Your Assets Are Safe With Us</h2>
+        <p class="sub">Security is built into every layer of Binoex.</p>
+        <ul>
+          <li><span class="ic">🏦</span><span><b>Segregated custody</b><small>Every user holds a dedicated custody account — funds are never pooled.</small></span></li>
+          <li><span class="ic">🧊</span><span><b>Cold storage</b><small>The majority of assets are held offline in multi-signature cold wallets.</small></span></li>
+          <li><span class="ic">🔐</span><span><b>Account protection</b><small>Encrypted credentials, withdrawal whitelists and session controls.</small></span></li>
+          <li><span class="ic">📜</span><span><b>Proof of reserves</b><small>Reserves are verifiable on-chain at any time.</small></span></li>
+        </ul>
+      </div>
+      <div class="app-box">
+        <div class="qr" id="qr"></div>
+        <div><h3 style="margin:0 0 6px">Trade Anytime, Anywhere</h3><p class="muted" style="margin:0">Scan to open Binoex on your phone.</p>
+          <div class="store"><span>🍎 App Store</span><span>▶ Google Play</span><span>⬇ APK</span></div></div>
+      </div>
+    </section>
+
+    <section class="container section" style="text-align:center">
+      <h2>Start Trading Today</h2>
+      <p class="sub">Create an account in minutes and join the Binoex community.</p>
+      <a class="btn btn-primary btn-lg" href="login.html?mode=register">Sign Up Now</a>
     </section>
   </main>
 
-  <footer><div class="container">© <span id="year"></span> Binoex. Digital assets are volatile; trade responsibly.</div></footer>
-
-  <!-- auth modal -->
-  <div class="modal" id="authModal">
-    <div class="card">
-      <h2 id="authTitle">Log in</h2>
-      <form id="authForm">
-        <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email" /></div>
-        <div class="field"><label>Password</label><input type="password" name="password" required minlength="8" autocomplete="current-password" /></div>
-        <div class="err" id="authErr"></div>
-        <button class="btn primary" style="width:100%" id="authSubmit" type="submit">Log in</button>
-      </form>
-      <div class="switch" id="authSwitch">No account? <a id="toRegister">Create one</a></div>
-    </div>
-  </div>
-
-  <script src="js/api.js"></script>
-  <script src="js/landing.js"></script>
+  <footer id="ftr"></footer>
+  <script src="vendor/qrcode.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>

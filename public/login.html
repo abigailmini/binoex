@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binoex | Log In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/bybit.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header id="hdr"></header>
+  <main class="auth">
+    <div class="art">
+      <h1>Welcome to Binoex</h1>
+      <p>Trade 500+ pairs with institutional liquidity, segregated custody and 24/7 support.</p>
+      <ul style="list-style:none;padding:0;margin:28px 0 0;color:var(--text-2);display:grid;gap:12px">
+        <li>✔&nbsp; Ultra-low fees and tight spreads</li>
+        <li>✔&nbsp; Instant deposits on major networks</li>
+        <li>✔&nbsp; Up to 100x leverage on USDT perpetuals</li>
+      </ul>
+    </div>
+    <div class="form">
+      <div class="auth-card">
+        <h2 id="title">Log In</h2>
+        <div class="tabs" style="margin-bottom:20px"><button class="active">Email</button><button disabled title="Coming soon">Mobile</button></div>
+        <form id="form" novalidate>
+          <div class="field"><label>Email</label><div class="input"><input type="email" name="email" placeholder="Enter your email" autocomplete="email" required /></div></div>
+          <div class="field"><label>Password</label><div class="input"><input type="password" name="password" placeholder="Enter your password" minlength="8" required /><button type="button" class="act" id="togglePw">Show</button></div></div>
+          <div class="field hidden" id="refField"><label>Referral Code (Optional)</label><div class="input"><input name="ref" placeholder="Enter referral code" /></div></div>
+          <label class="check hidden" id="agree"><input type="checkbox" name="agree" /> I have read and agree to the <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>.</label>
+          <div class="err" id="err"></div>
+          <button class="btn btn-primary btn-block btn-lg" id="submit" type="submit">Log In</button>
+        </form>
+        <div class="or">or continue with</div>
+        <div class="oauth"><button class="btn btn-secondary" type="button">G &nbsp;Google</button><button class="btn btn-secondary" type="button"> &nbsp;Apple</button></div>
+        <p class="muted" style="text-align:center;margin-top:24px" id="switch"></p>
+      </div>
+    </div>
+  </main>
+  <script src="js/core.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

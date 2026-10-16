@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binoex | Trade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/bybit.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header id="hdr"></header>
+
+  <main class="trade">
+    <!-- ticker bar -->
+    <div class="tbar">
+      <div class="symbol" id="symBtn">
+        <span id="symIcon"></span>
+        <span><b id="symName">--</b><br /><small class="dim" id="symType">--</small></span>
+        <svg class="chev" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        <div class="sym-dd" id="symDd">
+          <div class="search"><span class="dim">🔍</span><input id="symQ" placeholder="Search" /></div>
+          <div class="tabs pill" style="padding:0 10px 8px"><button class="active" data-c="linear">Derivatives</button><button data-c="spot">Spot</button></div>
+          <div class="it hd"><span>Symbol</span><span style="text-align:right">Last Price</span><span style="text-align:right">24H %</span></div>
+          <div class="list" id="symList"></div>
+        </div>
+      </div>
+      <div class="last" id="tLast">--</div>
+      <div class="stat" id="markStat"><small>Mark Price</small><span id="tMark">--</span></div>
+      <div class="stat" id="indexStat"><small>Index Price</small><span id="tIndex">--</span></div>
+      <div class="stat"><small>24H Change %</small><span id="tChg">--</span></div>
+      <div class="stat"><small>24H High</small><span id="tHigh">--</span></div>
+      <div class="stat"><small>24H Low</small><span id="tLow">--</span></div>
+      <div class="stat"><small>24H Turnover (USDT)</small><span id="tTurn">--</span></div>
+      <div class="stat"><small>24H Volume</small><span id="tVol">--</span></div>
+      <div class="stat" id="fundStat"><small>Funding / Countdown</small><span id="tFund">--</span></div>
+      <div class="stat" id="oiStat"><small>Open Interest</small><span id="tOi">--</span></div>
+    </div>
+
+    <!-- chart -->
+    <div class="chart-box">
+      <div class="chart-tools">
+        <span class="dim" style="margin-right:4px">Time</span>
+        <button data-i="1">1m</button><button data-i="5">5m</button><button data-i="15">15m</button><button data-i="60" class="active">1H</button><button data-i="240">4H</button><button data-i="D">1D</button><button data-i="W">1W</button>
+        <span class="sep"></span>
+        <button id="chartType">Candles</button>
+        <span class="sep"></span>
+        <span class="dim" id="ohlc"></span>
+      </div>
+      <div id="chart"></div>
+    </div>
+
+    <!-- order book / trades -->
+    <div class="ob">
+      <div class="tabs"><button class="active" data-t="book">Order Book</button><button data-t="trades">Recent Trades</button></div>
+      <div id="bookView" class="rows">
+        <div class="hd"><span>Price (<span id="obQuote">USDT</span>)</span><span>Qty (<span id="obBase">BTC</span>)</span><span>Total</span></div>
+        <div class="side asks" id="asks"></div>
+        <div class="mid"><span id="midPrice">--</span><span id="midArrow"></span><small id="midMark"></small></div>
+        <div class="side bids" id="bids"></div>
+        <div class="ratio"><span class="up" id="buyPct">50%</span><div class="bar"><i id="ratioBar" style="width:50%"></i></div><span class="down" id="sellPct">50%</span></div>
+      </div>
+      <div id="tradesView" class="rows hidden">
+        <div class="hd"><span>Price (<span id="trQuote">USDT</span>)</span><span>Qty</span><span>Time</span></div>
+        <div class="trades" id="trades"></div>
+      </div>
+    </div>
+
+    <!-- order form -->
+    <div class="of">
+      <div class="row sb" id="levRow"><span class="tag y">Cross</span><button class="btn btn-secondary btn-xs" id="levBtn">10x</button></div>
+      <div class="tabs" style="margin-top:8px"><button class="active" data-ot="Limit">Limit</button><button data-ot="Market">Market</button><button data-ot="Conditional">Conditional</button></div>
+      <div class="bs"><button class="buy active" data-side="Buy" id="bsBuy">Buy / Long</button><button class="sell" data-side="Sell" id="bsSell">Sell / Short</button></div>
+
+      <div id="guest" class="guest hidden">
+        <p>Log in or sign up to start trading.</p>
+        <div class="row"><a class="btn btn-primary btn-block" href="login.html">Log In</a><a class="btn btn-secondary btn-block" href="login.html?mode=register">Sign Up</a></div>
+      </div>
+
+      <form id="orderForm">
+        <div class="kv"><span>Available</span><b id="avail" class="num">--</b></div>
+        <div class="field hidden" id="trigField"><label>Trigger Price</label><div class="input sm"><input type="number" step="any" id="oTrig" placeholder="0.0" /><span class="unit" id="trigUnit">USDT</span></div></div>
+        <div class="field" id="priceField"><label>Order Price</label><div class="input sm"><input type="number" step="any" id="oPrice" placeholder="0.0" /><span class="unit" id="priceUnit">USDT</span><button type="button" class="act" id="lastBtn">Last</button></div></div>
+        <div class="field"><label>Qty</label><div class="input sm"><input type="number" step="any" id="oQty" placeholder="0" /><span class="unit" id="qtyUnit">BTC</span></div></div>
+        <div class="slider"><input type="range" min="0" max="100" value="0" id="pct" /><div class="marks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div></div>
+        <div class="kv"><span>Order Value</span><b id="orderValue" class="num">-- USDT</b></div>
+        <div class="opts">
+          <label class="check"><input type="checkbox" id="tpsl" /> TP/SL</label>
+          <label class="check" id="roWrap"><input type="checkbox" id="reduceOnly" /> Reduce-Only</label>
+          <label class="check" id="poWrap"><input type="checkbox" id="postOnly" /> Post-Only</label>
+        </div>
+        <div id="tpslFields" class="hidden">
+          <div class="field"><label>Take Profit</label><div class="input sm"><input type="number" step="any" id="oTp" placeholder="0.0" /><span class="unit">USDT</span></div></div>
+          <div class="field"><label>Stop Loss</label><div class="input sm"><input type="number" step="any" id="oSl" placeholder="0.0" /><span class="unit">USDT</span></div></div>
+        </div>
+        <div class="err" id="oErr"></div>
+        <button class="btn btn-green btn-block btn-lg" id="oSubmit" type="submit">Buy / Long</button>
+      </form>
+
+      <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:10px">
+        <div class="kv"><span>Margin Balance</span><b id="acctEquity" class="num">--</b></div>
+        <div class="kv"><span>Available Balance</span><b id="acctAvail" class="num">--</b></div>
+        <div class="row" style="margin-top:8px"><a class="btn btn-secondary btn-xs btn-block" href="assets.html#deposit">Deposit</a><a class="btn btn-secondary btn-xs btn-block" href="assets.html">Assets</a></div>
+      </div>
+    </div>
+
+    <!-- bottom panel -->
+    <div class="bottom">
+      <div class="tabs">
+        <button class="active" data-b="positions" id="tabPositions">Positions (<span id="nPos">0</span>)</button>
+        <button data-b="open">Open Orders (<span id="nOpen">0</span>)</button>
+        <button data-b="history">Order History</button>
+        <button data-b="fills">Trade History</button>
+        <button data-b="assets">Assets</button>
+      </div>
+      <div class="body" id="bottomBody"><div class="empty tbl" style="display:block">Log in to view</div></div>
+    </div>
+  </main>
+
+  <script src="vendor/lightweight-charts.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/trade.js"></script>
+</body>
+</html>
