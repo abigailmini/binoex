@@ -1,16 +1,38 @@
 (() => {
-  const { api, marketSocket, fmt, setToken, token } = window.Binoex;
-  if (!token()) { location.href = './'; return; }
+  const { api, marketSocket, fmt, setToken, token, STATIC, STATIC_SYMBOLS } = window.Binoex;
+  if (!token() && !STATIC) { location.href = './'; return; }
 
   const $ = (id) => document.getElementById(id);
   const toast = (msg, ok = true) => { const t = $('toast'); t.textContent = msg; t.style.borderColor = ok ? 'var(--green)' : 'var(--red)'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000); };
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
   let services, user;
-  const sock = marketSocket();
+  // Backend relay carries every category on one socket; in STATIC mode each category is its own Bybit stream.
+  const socks = {};
+  const sock = {
+    subscribe: (cat, topic, h) => (socks[STATIC ? cat : 'relay'] ??= marketSocket(cat)).subscribe(cat, topic, h),
+    unsubscribe: (cat, topic) => socks[STATIC ? cat : 'relay']?.unsubscribe(cat, topic),
+  };
 
   // ---------- boot ----------
   (async () => {
+    await null; // let the rest of this script's declarations initialise before touching them
+    if (STATIC) {
+      // Preview terminal on GitHub Pages: live market data, no account.
+      user = { email: 'preview', uid: null };
+      services = {
+        online: false, withdrawals: false,
+        services: { spot: { id: 'spot', label: 'Spot', live: true }, linear: { id: 'linear', label: 'USDT Perps', live: true } },
+        markets: { spot: STATIC_SYMBOLS, linear: STATIC_SYMBOLS.slice(0, 3) },
+        depositAssets: [{ coin: 'USDT', chain: 'TRX' }, { coin: 'USDT', chain: 'ETH' }, { coin: 'BTC', chain: 'BTC' }, { coin: 'ETH', chain: 'ETH' }],
+      };
+      $('userEmail').textContent = 'Preview mode';
+      $('banner').innerHTML = 'Preview terminal — live Bybit market data, but no account: orders, deposits and withdrawals need the Binoex backend deployed with your Bybit keys.';
+      $('banner').style.display = 'block';
+      fillAssetSelects();
+      show('trade', document.querySelector('.side a[data-view="trade"]'));
+      return;
+    }
     try {
       [{ user }, services] = await Promise.all([api('/auth/me'), api('/services')]);
     } catch (e) {
