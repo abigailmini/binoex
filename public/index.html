@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binoex — Buy, sell and trade crypto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;width:100%">
+      <a class="logo" href="/"><span class="mark">B</span> Binoex</a>
+      <div class="links">
+        <a class="btn" id="btnLogin">Log in</a>
+        <a class="btn primary" id="btnRegister">Get started</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h1>Trade crypto with <span>institutional-grade</span> liquidity.</h1>
+        <p>Spot and derivatives markets, instant deposits, secure withdrawals. Binoex gives you deep order books and tight spreads from day one.</p>
+        <div class="cta">
+          <a class="btn primary" id="btnRegister2">Create account</a>
+          <a class="btn" href="#markets">View markets</a>
+        </div>
+      </div>
+      <div class="ticker-card" id="markets">
+        <div class="row head"><div>Market</div><div>Last price</div><div>24h change</div></div>
+        <div id="landingTickers"><div class="row"><div class="sym">Loading…</div><div></div><div></div></div></div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature"><div class="ic">⚡</div><h3>Deep liquidity</h3><p>Orders are routed to a top-tier global order book, so you get fills at real market prices.</p></div>
+      <div class="feature"><div class="ic">🔐</div><h3>Segregated accounts</h3><p>Every user gets their own segregated custody account. Your funds are never pooled.</p></div>
+      <div class="feature"><div class="ic">💸</div><h3>Fast deposits</h3><p>Deposit USDT, BTC, ETH, SOL and more on the chains you already use. Credited after network confirmation.</p></div>
+      <div class="feature"><div class="ic">📈</div><h3>Real-time data</h3><p>Streaming tickers, order books and trades over WebSocket. No refresh needed.</p></div>
+    </section>
+  </main>
+
+  <footer><div class="container">© <span id="year"></span> Binoex. Digital assets are volatile; trade responsibly.</div></footer>
+
+  <!-- auth modal -->
+  <div class="modal" id="authModal">
+    <div class="card">
+      <h2 id="authTitle">Log in</h2>
+      <form id="authForm">
+        <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email" /></div>
+        <div class="field"><label>Password</label><input type="password" name="password" required minlength="8" autocomplete="current-password" /></div>
+        <div class="err" id="authErr"></div>
+        <button class="btn primary" style="width:100%" id="authSubmit" type="submit">Log in</button>
+      </form>
+      <div class="switch" id="authSwitch">No account? <a id="toRegister">Create one</a></div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/landing.js"></script>
+</body>
+</html>

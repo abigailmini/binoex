@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binoex — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;width:100%">
+      <a class="logo" href="/"><span class="mark">B</span> Binoex</a>
+      <div class="links">
+        <span class="pill" id="userEmail"></span>
+        <a class="btn sm" id="btnLogout">Log out</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app">
+    <aside class="side">
+      <a data-view="wallet" class="active">💼 Wallet</a>
+      <a data-view="deposit">⬇️ Deposit</a>
+      <a data-view="withdraw">⬆️ Withdraw</a>
+      <a data-view="trade" data-service="spot">📈 Spot</a>
+      <a data-view="perps" data-service="linear">⚡ Perps</a>
+      <a data-view="orders">🧾 Orders</a>
+    </aside>
+
+    <main class="main">
+      <div class="banner" id="banner"></div>
+
+      <!-- WALLET -->
+      <section class="view active" id="view-wallet">
+        <div class="grid2">
+          <div class="panel"><h3>Total equity</h3><div class="stat" id="equity">—</div></div>
+          <div class="panel"><h3>Available</h3><div class="stat" id="available">—</div></div>
+        </div>
+        <div class="panel">
+          <h3>Assets <button class="btn sm" id="refreshBal">Refresh</button></h3>
+          <table><thead><tr><th>Coin</th><th>Balance</th><th>Locked</th><th>USD value</th></tr></thead><tbody id="balances"><tr><td colspan="4">Loading…</td></tr></tbody></table>
+        </div>
+      </section>
+
+      <!-- DEPOSIT -->
+      <section class="view" id="view-deposit">
+        <div class="grid2">
+          <div class="panel">
+            <h3>Deposit crypto</h3>
+            <div class="field"><label>Asset</label><select id="depCoin"></select></div>
+            <div class="field"><label>Network</label><select id="depChain"></select></div>
+            <button class="btn primary" id="depGet">Show deposit address</button>
+            <div id="depResult" style="margin-top:14px;display:none">
+              <div class="addr mono" id="depAddr"></div>
+              <div id="depTagWrap" style="display:none"><label style="font-size:13px;color:var(--muted)">Memo / Tag (required)</label><div class="addr mono" id="depTag"></div></div>
+              <button class="btn sm" id="depCopy">Copy address</button>
+              <p style="color:var(--muted);font-size:13px" id="depNote"></p>
+            </div>
+            <div class="err" id="depErr"></div>
+          </div>
+          <div class="panel">
+            <h3>Deposit history <button class="btn sm" id="depRefresh">Refresh</button></h3>
+            <table><thead><tr><th>Time</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="depHist"><tr><td colspan="4">—</td></tr></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- WITHDRAW -->
+      <section class="view" id="view-withdraw">
+        <div class="grid2">
+          <div class="panel">
+            <h3>Withdraw crypto</h3>
+            <form id="wdForm">
+              <div class="field"><label>Asset</label><select id="wdCoin"></select></div>
+              <div class="field"><label>Network</label><select id="wdChain"></select></div>
+              <div class="field"><label>Address</label><input id="wdAddr" required autocomplete="off" /></div>
+              <div class="field"><label>Memo / Tag (optional)</label><input id="wdTag" autocomplete="off" /></div>
+              <div class="field"><label>Amount</label><input id="wdAmt" type="number" step="any" min="0" required /></div>
+              <p style="color:var(--muted);font-size:13px" id="wdNote"></p>
+              <div class="err" id="wdErr"></div>
+              <button class="btn primary" id="wdSubmit" type="submit">Withdraw</button>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Withdrawal history <button class="btn sm" id="wdRefresh">Refresh</button></h3>
+            <table><thead><tr><th>Time</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="wdHist"><tr><td colspan="4">—</td></tr></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRADE (spot & perps share this layout) -->
+      <section class="view" id="view-trade">
+        <div class="trade-layout">
+          <div class="panel markets-list"><h3>Markets</h3><div id="mktList"></div></div>
+          <div>
+            <div class="panel">
+              <h3><span id="tSymbol">—</span><span id="tCat" class="pill"></span></h3>
+              <div style="display:flex;gap:28px;flex-wrap:wrap">
+                <div><div style="color:var(--muted);font-size:12px">Last</div><div class="stat" id="tLast">—</div></div>
+                <div><div style="color:var(--muted);font-size:12px">24h change</div><div class="stat" id="tChg">—</div></div>
+                <div><div style="color:var(--muted);font-size:12px">24h high</div><div id="tHigh">—</div><div style="color:var(--muted);font-size:12px">24h low</div><div id="tLow">—</div></div>
+                <div><div style="color:var(--muted);font-size:12px">24h volume</div><div id="tVol">—</div></div>
+              </div>
+            </div>
+            <div class="panel"><h3>Recent trades</h3><div class="book" id="tTrades"></div></div>
+          </div>
+          <div>
+            <div class="panel">
+              <h3>Order book</h3>
+              <div class="book"><div id="asks"></div><div class="mid" id="mid">—</div><div id="bids"></div></div>
+            </div>
+            <div class="panel">
+              <div class="tabs"><button class="active" data-side="Buy">Buy</button><button data-side="Sell">Sell</button></div>
+              <div class="tabs"><button class="active" data-type="Market">Market</button><button data-type="Limit">Limit</button></div>
+              <form id="orderForm">
+                <div class="field" id="priceField" style="display:none"><label>Price</label><input id="oPrice" type="number" step="any" /></div>
+                <div class="field"><label id="qtyLabel">Amount</label><input id="oQty" type="number" step="any" min="0" required /></div>
+                <div class="err" id="oErr"></div>
+                <button class="btn buy" id="oSubmit" type="submit" style="width:100%">Buy</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORDERS -->
+      <section class="view" id="view-orders">
+        <div class="panel">
+          <h3>Open orders <span><select id="ordCat" style="width:auto;padding:5px 8px"></select> <button class="btn sm" id="ordRefresh">Refresh</button></span></h3>
+          <table><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Type</th><th>Price</th><th>Qty</th><th>Filled</th><th></th></tr></thead><tbody id="openOrders"></tbody></table>
+        </div>
+        <div class="panel" id="posPanel" style="display:none">
+          <h3>Positions</h3>
+          <table><thead><tr><th>Symbol</th><th>Side</th><th>Size</th><th>Entry</th><th>Mark</th><th>Unrealised PnL</th></tr></thead><tbody id="positions"></tbody></table>
+        </div>
+        <div class="panel">
+          <h3>Order history</h3>
+          <table><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Type</th><th>Avg price</th><th>Qty</th><th>Status</th></tr></thead><tbody id="orderHist"></tbody></table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
